@@ -1,0 +1,27 @@
+patrol_controller:
+  ros__parameters:
+    point_ids: ["A", "B", "C"]
+    target_xs: [8.0, 2.0, 2.0]
+    target_ys: [8.0, 8.0, 2.0]
+
+    # Speeds use turtlesim coordinate units/s and radians/s.
+    max_linear_speed: 1.0
+    max_angular_speed: 2.0
+    linear_gain: 0.8
+    angular_gain: 2.0
+    distance_tolerance: 0.1
+    heading_tolerance: 0.1
+
+    pose_timeout_sec: 1.0
+    movement_timeout_sec: 60.0
+    inspection_timeout_sec: 5.0
+
+inspection_detector:
+  ros__parameters:
+    point_ids: ["A", "B", "C"]
+    temperatures_c: [35.0, 85.0, 42.0]
+    temperature_threshold_c: 80.0
+
+inspection_logger:
+  ros__parameters:
+    output_dir: "~/ros2_inspection_robot/logs"
