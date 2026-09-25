@@ -1,5 +1,7 @@
 # ROS 2 巡检任务仿真
 
+> **个人学习项目**：用于练习 ROS 2 节点通信、任务状态机和基础测试。功能与验证范围有限，仅供学习交流，不适用于生产环境或真实机器人部署。
+
 基于 **ROS 2 Humble、Python 和 turtlesim** 的巡检流程演示。机器人依次前往巡检点，到点后请求模拟温度检测，统计异常点，并将状态和结果保存为 JSONL 文件。
 
 默认路线为 **A(8,8) → B(2,8) → C(2,2)**。温度分别为 35、85、42℃，阈值为 80℃，最终异常点数为 1。温度异常会被记录，机器人继续执行后续巡检。
@@ -14,15 +16,15 @@
 | ROS 2 | Humble |
 | Python | 3.10.12 |
 | 包类型 | ament_python |
-| 基础自动化测试 | 用户在 Ubuntu 验证：58 passed in 0.40s |
+| 基础自动化测试 | Ubuntu 环境运行结果：58 passed in 0.40s |
 
-开发过程由 Codex 辅助完成，ROS 运行和验收由用户在 Ubuntu 执行。Windows 编辑目录与 Ubuntu 工作空间没有确认自动同步；Windows 上修改文件后，需要同步到 Ubuntu 才能运行新版。
+项目开发使用了 AI 编程辅助工具，运行与测试在上述 Ubuntu 环境中完成。
 
 ## 安装与启动
 
 以下假定已安装 ROS 2 Humble，并已配置相应软件源；将本项目放在 `~/ros2_inspection_robot`，使包位于 `~/ros2_inspection_robot/src/inspection_robot`。
 
-首次获取源码（私有仓库需要使用获授权的 GitHub 账号）：
+获取源码：
 
 ```bash
 git clone https://github.com/iori-shino/ros2_inspection_robot.git ~/ros2_inspection_robot
@@ -35,7 +37,7 @@ sudo apt update
 sudo apt install ros-humble-turtlesim python3-colcon-common-extensions python3-pytest
 ```
 
-构建工作空间。构建报错时先处理错误，再进行启动：
+构建工作空间：
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -156,7 +158,7 @@ cd ~/ros2_inspection_robot/src/inspection_robot
 python3 -m pytest tests/test_core.py -q
 ```
 
-2026-09-26，用户在 Ubuntu 反馈：
+2026-09-26，Ubuntu 环境下的基础测试结果：
 
 ```text
 58 passed in 0.40s
@@ -181,9 +183,9 @@ python3 -m pytest tests/test_core.py -q
 
 新环境安装流程未在全新虚拟机上重新验收；上面的测试结果来自已有 Ubuntu 开发环境。
 
-## 源码阅读顺序
+## 源码结构
 
-| 文件 | 阅读重点 |
+| 文件 | 功能 |
 | --- | --- |
 | [patrol_logic.py](src/inspection_robot/inspection_robot/patrol_logic.py) | 距离、方向误差计算 |
 | [message_utils.py](src/inspection_robot/inspection_robot/message_utils.py) | 消息格式与有效性检查 |
@@ -202,18 +204,6 @@ python3 -m pytest tests/test_core.py -q
 
 `COMPLETED` 和 `ERROR` 是业务状态，不代表进程退出。节点仍保持运行，直到用户结束程序；没有自动重试。
 
-## 一分钟项目介绍
+## 许可证
 
-> 我在 Codex 辅助下完成了一个 ROS 2 Python 巡检任务仿真，并在 Ubuntu 上执行了构建、运行和验收。它使用 turtlesim 模拟机器人，按配置依次到达巡检点，通过 topic 请求模拟温度检测，保存结果并统计异常点。控制、检测和记录分别由独立节点负责，使用 run_id 区分任务，并处理超时和重复消息。项目有统一 launch 启动入口，58 项基础自动化测试通过，节点通信和退出联动也做了手工验证。目前它的重点是任务流程和通信，还没有接入真实传感器和导航系统。
-
-可结合实际理解调整介绍，不需要背代码。复盘时先回答三个问题：消息如何在节点间流动；run_id、超时和去重各解决什么问题；如何确认程序运行的是最新代码。
-
-一个实际排错案例是 detector 参数覆盖没有生效：通过比较 Ubuntu 源文件、实际导入路径和初始化代码，确认虚拟机仍运行旧源码；同步、构建后，90℃阈值和错误配置退出均验证通过。`build/` 导入路径本身不是错误，关键是核对实际代码内容。
-
-## 发布与许可证
-
-采用 [MIT License](LICENSE)，署名沿用包内的维护者名称 iori。
-
-项目仓库：[iori-shino/ros2_inspection_robot](https://github.com/iori-shino/ros2_inspection_robot)。维护者联系字段使用该 GitHub 账号的 no-reply 地址。当前提供已验证的终端运行示例，尚未附带截图/录像。
-
-开发交接记录单独保存在本地，不随项目源码发布。
+采用 [MIT License](LICENSE)。
